@@ -57,14 +57,14 @@ class config:
             if start >= len(self.words):
                 raise BaseException("config_reader.py: get_field: failed to find field " + looking_for)
         return field
-    def get_val(self, field, valname):
+    def get_attr(self, field, attr):
         val = []
         after_eol = False
         start = 0
         found = False
         for w in field:
             start+=1
-            if w == valname and after_eol:
+            if w == attr and after_eol:
                 found = True
                 val.append([])
                 for i in range(start, len(field)):
@@ -74,25 +74,26 @@ class config:
             if w == self.eol:
                 after_eol = True
         if found == False:
-            raise BaseException("config_reader.py: get_val: failed to find attr " + valname)
+            raise BaseException("config_reader.py: get_val: failed to find attr " + attr)
         return val
 
-    def get_last_val(self, field, valname):
-        val = self.get_val(field, valname)
+    def get_last_attr(self, field, attr):
+        val = self.get_attr(field, attr)
         return val[-1]
-    def get_first_val(self, field, valname):
-        val = self.get_val(field, valname)
+    
+    def get_first_attr(self, field, attr):
+        val = self.get_attr(field, attr)
         return val[0]
         
-    def dir_get_val(self, fieldname, valname):
+    def dir_get_attr(self, fieldname, attr):
         field = self.get_field(fieldname)
-        return self.get_val(field, valname)    
-    def dir_get_last_val(self, fieldname, valname):
+        return self.get_attr(field, attr)    
+    def dir_get_last_attr(self, fieldname, attr):
         field = self.get_field(fieldname)
-        return self.get_last_val(field, valname)
-    def dir_get_first_val(self, fieldname, valname):
+        return self.get_last_attr(field, attr)
+    def dir_get_first_attr(self, fieldname, attr):
         field = self.get_field(fieldname)
-        return self.get_first_val(field, valname)
+        return self.get_first_attr(field, attr)
 
     def save_config(self, filename):
         with open(filename, "w") as file:
@@ -152,6 +153,6 @@ if __name__ == "__main__":
         
     cfg = config(filename)
     cfg.config_reader(filename)
-    print(cfg.get_val(cfg.get_field("FIELD1"), "MIN"))
+    print(cfg.dir_get_attr("FIELD1", "MIN"))
     cfg.set_field_attr("FIELD1", "MIN", ["gamer", "gama"])
     cfg.save_config("new.cfg")
