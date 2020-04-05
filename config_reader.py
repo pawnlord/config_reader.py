@@ -24,7 +24,6 @@ class config:
             with open(self.filename, "r") as fp:
                 text = fp.read()
                 for c in text:
-                    print(c, end='')
                     if c == self.eol:
                         if self.words[-1] != '':
                             self.words.append(self.eol)
@@ -38,7 +37,6 @@ class config:
                             self.words.append("")
                         continue
                     self.words[-1] += c
-            print(self.words)
     def get_field(self, fieldname):
         field = []
         looking_for = '[' + fieldname + ']'
@@ -138,7 +136,30 @@ class config:
 
         if not found:
             raise BaseException("config_reader.py: set_field_attr: failed to find attr " + attr + " in field " + looking_for)
-
+    def set_field(self, fieldname, new_field):
+        looking_for = '[' + fieldname + ']'
+        start = 0
+        found = False
+        for w in self.words:
+            start+=1
+            if w == looking_for:
+                found = True
+                break
+        if not found:
+            raise BaseException("config_reader.py: set_field_attr: failed to find field " + looking_for)
+        i = start
+        erasing = False
+        while i < len(self.words) and not is_field(self, self.words[i]):
+            if i-start >= len(new_field):
+                erasing = True
+            if not erasing:
+                self.words[i] = new_field[i-start]
+            else:
+                self.words[i] = ""
+            i+=1
+        while i-start < len(new_field):
+            self.words.insert(i, new_field[i-start])
+            i+=1
 if __name__ == "__main__":
     import sys
     filename = ""
@@ -154,5 +175,14 @@ if __name__ == "__main__":
     cfg = config(filename)
     cfg.config_reader(filename)
     print(cfg.dir_get_attr("FIELD1", "MIN"))
-    cfg.set_field_attr("FIELD1", "MIN", ["gamer", "gama"])
+    field = cfg.get_field("FIELD1")
+    field[0] = "\n"
+    field[1] = "this"
+    field[2] = "is"
+    field[3] = "a"
+    field[4] = "test"
+    field[5] = "\n"
+    field.append("\n")
+    field.append("test2")
+    cfg.set_field("FIELD1", field)
     cfg.save_config("new.cfg")
