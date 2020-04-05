@@ -31,6 +31,9 @@ cfg.dir_get_last_val("FIELD1", "MIN")
 # if you want to edit an attribute, use set_field_attr()
 cfg.set_field_attr("FIELD1", "MIN", ["20"])
 
+# if you want to directly edit a field, use set_field()
+cfg.set_field_attr("FIELD1", ["MIN", "10", "\n", "MAX", "20", "\n", "\n"])
+
 # if you changed anything, use save_config
 cfg.save_config("example.cfg")
 ```
