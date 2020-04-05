@@ -61,9 +61,11 @@ class config:
         val = []
         after_eol = False
         start = 0
+        found = False
         for w in field:
             start+=1
             if w == valname and after_eol:
+                found = True
                 val.append([])
                 for i in range(start, len(field)):
                     if field[i] == '\n' and not is_field(cfg, field[i]):
@@ -71,20 +73,16 @@ class config:
                     val[-1].append(field[i])
             if w == self.eol:
                 after_eol = True
+        if found == False:
+            raise BaseException("config_reader.py: get_val: failed to find attr " + valname)
         return val
 
     def get_last_val(self, field, valname):
         val = self.get_val(field, valname)
-        if len(val) == 0:
-            return val
-        else:
-            return val[-1]
+        return val[-1]
     def get_first_val(self, field, valname):
         val = self.get_val(field, valname)
-        if len(val) == 0:
-            return val
-        else:
-            return val[0]
+        return val[0]
         
     def dir_get_val(self, fieldname, valname):
         field = self.get_field(fieldname)
@@ -113,7 +111,7 @@ class config:
                 found = True
                 break
         if not found:
-            raise BaseException("config_reader.py: get_field: failed to find field " + looking_for)
+            raise BaseException("config_reader.py: set_field_attr: failed to find field " + looking_for)
         found = False
         if self.words[start] == self.eol:
             start+=1
@@ -138,7 +136,7 @@ class config:
             start+=1
 
         if not found:
-            raise BaseException("config_reader.py: get_field: failed to find field " + looking_for)
+            raise BaseException("config_reader.py: set_field_attr: failed to find attr " + attr + " in field " + looking_for)
 
 if __name__ == "__main__":
     import sys
@@ -154,5 +152,6 @@ if __name__ == "__main__":
         
     cfg = config(filename)
     cfg.config_reader(filename)
+    print(cfg.get_val(cfg.get_field("FIELD1"), "MIN"))
     cfg.set_field_attr("FIELD1", "MIN", ["gamer", "gama"])
     cfg.save_config("new.cfg")

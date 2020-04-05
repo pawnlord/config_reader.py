@@ -2,8 +2,8 @@
 I made [this](https://www.github.com/pawnlord/config_reader) but in python  
   
 ## usage
-It has all the same functionallity as the other one, just with different syntax 
-**How to Use**
+It has all the same functionallity as the other one, just with different syntax  
+**How to Use**  
 ```
 cfg = config("example.cfg") 
 # constructor syntax
@@ -27,4 +27,12 @@ cfg.get_last_val(field1, "MIN")
 cfg.dir_get_val("FIELD1", "MIN")
 cfg.dir_get_first_val("FIELD1", "MIN")
 cfg.dir_get_last_val("FIELD1", "MIN")
+
+# if you want to edit an attribute, use set_field_attr()
+cfg.set_field_attr("FIELD1", "MIN", ["20"])
+
+# if you changed anything, use save_config
+cfg.save_config("example.cfg")
 ```
+## errors
+if you try and get a field or value that doesn't exist, it will throw a BaseError. If this could possibly happen in your program, make sure to catch it!
